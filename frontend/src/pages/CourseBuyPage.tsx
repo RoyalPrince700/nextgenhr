@@ -26,7 +26,8 @@ export function CourseBuyPage() {
     )
   }
 
-  const buyPath = `/courses/${course.slug}/buy`
+  const selected = course
+  const buyPath = `/courses/${selected.slug}/buy`
 
   async function handleBuy() {
     if (!user || !token) {
@@ -38,14 +39,14 @@ export function CourseBuyPage() {
     setMessage('')
 
     try {
-      await coursesApi.enroll(token, course.slug)
+      await coursesApi.enroll(token, selected.slug)
       setStatus('done')
-      setMessage(`You now have access to ${course.title}.`)
+      setMessage(`You now have access to ${selected.title}.`)
     } catch (error) {
       const text = error instanceof Error ? error.message : 'Unable to complete this purchase.'
       if (text.toLowerCase().includes('already enrolled')) {
         setStatus('done')
-        setMessage(`You already have access to ${course.title}.`)
+        setMessage(`You already have access to ${selected.title}.`)
         return
       }
       setStatus('error')

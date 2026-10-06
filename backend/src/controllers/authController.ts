@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import type { Response } from 'express';
 import bcrypt from 'bcryptjs';
+import { ensureConfiguredAdmin, isConfiguredAdmin, normaliseRole } from '../config/roles.js';
 import { User } from '../models/User.js';
 import { requireAuth, signToken, type AuthRequest } from '../middleware/auth.js';
 
@@ -8,11 +9,18 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function publicUser(user: { _id: unknown; fullName: string; email: string; createdAt?: Date }) {
+function publicUser(user: {
+  _id: unknown;
+  fullName: string;
+  email: string;
+  role?: string;
+  createdAt?: Date;
+}) {
   return {
     id: String(user._id),
     fullName: user.fullName,
     email: user.email,
+    role: normaliseRole(user.role),
     createdAt: user.createdAt,
   };
 }
@@ -55,6 +63,7 @@ export async function signup(req: AuthRequest, res: Response): Promise<void> {
       fullName: name,
       email: normalisedEmail,
       password: hashed,
+      role: isConfiguredAdmin(normalisedEmail) ? 'admin' : 'learner',
     });
 
     const token = signToken(String(user._id));
@@ -92,6 +101,7 @@ export async function login(req: AuthRequest, res: Response): Promise<void> {
       return;
     }
 
+    await ensureConfiguredAdmin(user);
     const token = signToken(String(user._id));
     res.json({
       message: 'Signed in successfully.',
@@ -176,6 +186,9 @@ export async function resetPassword(req: AuthRequest, res: Response): Promise<vo
     user.password = await bcrypt.hash(password, 12);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
+    if (isConfiguredAdmin(user.email)) {
+      user.role = 'admin';
+    }
     await user.save();
 
     const authToken = signToken(String(user._id));

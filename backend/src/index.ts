@@ -3,9 +3,13 @@ import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 import { connectDB } from './config/db.js';
+import { syncConfiguredAdmins } from './config/roles.js';
 import enquiryRoutes from './routes/enquiryRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import courseRoutes from './routes/courseRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import jobRoutes from './routes/jobRoutes.js';
+import listingRoutes from './routes/listingRoutes.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 5000;
@@ -27,6 +31,9 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/enquiries', enquiryRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/listings', listingRoutes);
+app.use('/api/admin', adminRoutes);
 
 async function start() {
   try {
@@ -39,6 +46,7 @@ async function start() {
       );
     }
     await connectDB(MONGODB_URI);
+    await syncConfiguredAdmins();
     const server = app.listen(PORT, () => {
       console.log(`API listening on http://localhost:${PORT}`);
     });

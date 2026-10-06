@@ -14,17 +14,18 @@ export function Footer() {
         </div>
         <div>
           <h4>Programmes</h4>
-          <Link to="/programs">HR Professionals</Link>
-          <Link to="/programs">New Managers</Link>
-          <Link to="/programs">HR Leaders</Link>
-          <Link to="/solutions">Corporate HR Solutions</Link>
-          <Link to="/coaching">Executive Coaching</Link>
+          <Link to="/offerings?area=mentorship">HR Professionals</Link>
+          <Link to="/offerings?area=mentorship">New Managers</Link>
+          <Link to="/offerings?area=mentorship">HR Leaders</Link>
+          <Link to="/offerings?area=solutions">Corporate HR Solutions</Link>
+          <Link to="/offerings?area=coaching">Executive Coaching</Link>
         </div>
         <div>
           <h4>Explore</h4>
           <Link to="/profile">Fola Vincent</Link>
           <Link to="/courses">Courses</Link>
-          <Link to="/soft-skills">Next Gen Soft Skills</Link>
+          <Link to="/jobs">Job listings</Link>
+          <Link to="/offerings?area=soft-skills">Next Gen Soft Skills</Link>
           <Link to="/">Welcome</Link>
           <Link to="/apply">Admissions & Enquiries</Link>
         </div>

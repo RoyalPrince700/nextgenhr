@@ -4,10 +4,8 @@ import { useAuth } from '../context/AuthContext'
 const navLinks = [
   { to: '/profile', label: 'Profile' },
   { to: '/courses', label: 'Courses' },
-  { to: '/solutions', label: 'HR Solutions' },
-  { to: '/soft-skills', label: 'Soft Skills' },
-  { to: '/programs', label: 'Mentorship' },
-  { to: '/coaching', label: 'Coaching' },
+  { to: '/offerings', label: 'Offerings' },
+  { to: '/jobs', label: 'Jobs' },
 ]
 
 export function Header() {
@@ -43,6 +41,11 @@ export function Header() {
         <div className="header-actions">
           {!loading && user ? (
             <>
+              {user.role === 'admin' ? (
+                <Link className="btn btn-outline" to="/dashboard/admin">
+                  Admin
+                </Link>
+              ) : null}
               <Link className="btn btn-outline" to="/dashboard">
                 Dashboard
               </Link>

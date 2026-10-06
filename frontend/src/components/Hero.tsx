@@ -15,10 +15,10 @@ export function Hero() {
             and purposeful coaching for stronger judgement, execution and people impact.
           </p>
           <div className="hero-actions">
-            <Link className="btn btn-primary" to="/programs">
+            <Link className="btn btn-primary" to="/offerings?area=mentorship">
               Explore Programmes
             </Link>
-            <Link className="btn btn-outline" to="/coaching">
+            <Link className="btn btn-outline" to="/offerings?area=coaching">
               Executive Coaching
             </Link>
           </div>

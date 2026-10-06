@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CourseCard } from '../components/CourseCard'
+import { PublishedJobList } from '../components/PublishedJobList'
 import { useAuth } from '../context/AuthContext'
 import { useCourses } from '../hooks/useCourses'
 
@@ -82,6 +83,12 @@ export function DashboardPage() {
           ))}
         </div>
       ) : null}
+
+      <div className="dashboard-section-head">
+        <h2>Published jobs</h2>
+        <Link to="/dashboard/listings">Open job listings</Link>
+      </div>
+      <PublishedJobList />
     </section>
   )
 }

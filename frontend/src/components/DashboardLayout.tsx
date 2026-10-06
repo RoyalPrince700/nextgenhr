@@ -1,16 +1,25 @@
 import { useState } from 'react'
-import { BookOpen, LayoutDashboard, LogOut, PanelLeftClose, PanelLeftOpen, Settings } from 'lucide-react'
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { BookOpen, Briefcase, FilePlus, LayoutDashboard, LogOut, PanelLeftClose, PanelLeftOpen, Settings, Shield } from 'lucide-react'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-
-const links = [
-  { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, end: true },
-  { to: '/dashboard/courses', label: 'My courses', icon: BookOpen, end: false },
-  { to: '/dashboard/settings', label: 'Settings', icon: Settings, end: false },
-]
 
 export function DashboardLayout() {
   const { user, logout } = useAuth()
+  const links = [
+    { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, end: true },
+    { to: '/dashboard/listings', label: 'Job listings', icon: Briefcase, end: true },
+    ...(user?.role === 'job-lister'
+      ? [{ to: '/dashboard/list-jobs', label: 'List a job', icon: FilePlus, end: true }]
+      : []),
+    ...(user?.role === 'admin'
+      ? [
+          { to: '/dashboard/admin', label: 'Admin', icon: Shield, end: true },
+          { to: '/dashboard/jobs', label: 'Jobs', icon: Briefcase, end: true },
+        ]
+      : []),
+    { to: '/dashboard/courses', label: 'My courses', icon: BookOpen, end: false },
+    { to: '/dashboard/settings', label: 'Settings', icon: Settings, end: false },
+  ]
   const navigate = useNavigate()
   const [collapsed, setCollapsed] = useState(false)
   const initial = user?.fullName.trim().charAt(0).toUpperCase() || 'N'
@@ -24,13 +33,6 @@ export function DashboardLayout() {
     <div className={collapsed ? 'dashboard-shell is-collapsed' : 'dashboard-shell'}>
       <aside className="dashboard-sidebar">
         <div className="dashboard-sidebar-head">
-          <Link className="dashboard-brand" to="/" aria-label="NextGen HR Lab">
-            <div className="mark">N</div>
-            <div className="brand-name">
-              NextGen HR Lab
-              <small>Learner dashboard</small>
-            </div>
-          </Link>
           <button
             type="button"
             className="dashboard-collapse"
@@ -65,6 +67,8 @@ export function DashboardLayout() {
           <div className="dashboard-user-meta">
             <strong>{user?.fullName}</strong>
             <span>{user?.email}</span>
+            {user?.role === 'admin' ? <span className="dashboard-role">Administrator</span> : null}
+            {user?.role === 'job-lister' ? <span className="dashboard-role">Job lister</span> : null}
           </div>
           <button type="button" className="dashboard-signout" onClick={handleLogout} aria-label="Sign out">
             <LogOut size={16} aria-hidden="true" />

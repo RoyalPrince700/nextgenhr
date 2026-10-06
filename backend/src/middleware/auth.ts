@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { ensureConfiguredAdmin } from '../config/roles.js';
 import { User, type IUser } from '../models/User.js';
 
 export interface AuthRequest extends Request {
@@ -43,9 +44,45 @@ export async function requireAuth(
       return;
     }
 
-    req.user = user;
+    req.user = await ensureConfiguredAdmin(user);
     next();
   } catch {
     res.status(401).json({ message: 'Invalid or expired session. Please sign in again.' });
   }
+}
+
+export async function requireAdmin(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  if (!req.user) {
+    res.status(401).json({ message: 'Authentication required.' });
+    return;
+  }
+
+  if (req.user.role !== 'admin') {
+    res.status(403).json({ message: 'Admin access required.' });
+    return;
+  }
+
+  next();
+}
+
+export async function requireJobLister(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  if (!req.user) {
+    res.status(401).json({ message: 'Authentication required.' });
+    return;
+  }
+
+  if (req.user.role !== 'job-lister') {
+    res.status(403).json({ message: 'Job lister access required.' });
+    return;
+  }
+
+  next();
 }
